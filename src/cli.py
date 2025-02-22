@@ -349,7 +349,32 @@ class ZerePyCLI:
         except Exception as e:
             logger.error(f"Error loading agent: {e}")
 
+    def     # ...existing code...
     def _load_default_agent(self) -> None:
+        """Load users default agent"""
+        agent_general_config_path = Path("agents") / "general.json"
+        file = None
+        try:
+            file = open(agent_general_config_path, 'r', encoding='utf-8')
+            data = json.load(file)
+            if not data.get('default_agent'):
+                logger.error('No default agent defined, please set one in general.json')
+                return
+    
+            self._load_agent_from_file(data.get('default_agent'))
+        except FileNotFoundError:
+            logger.error("File general.json not found, please create one.")
+            return
+        except json.JSONDecodeError:
+            logger.error("File agents/general.json contains Invalid JSON format")
+            return
+        except UnicodeDecodeError as e:
+            logger.error(f"Error decoding file: {e}")
+            return
+        finally:
+            if file:
+                file.close()
+    # ...existing code...(self) -> None:
         """Load users default agent"""
         agent_general_config_path = Path("agents") / "general.json"
         file = None
